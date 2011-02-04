@@ -23,7 +23,7 @@ struct mpq *mpq_open(const char *path)
 	infile = open(path, O_RDONLY);
 	if(infile == -1)
 		return NULL;
-	
+
 	r = fstat(infile, &statinfo);
 	if(r == -1)
 		return NULL;
@@ -43,14 +43,39 @@ struct mpq *mpq_open(const char *path)
 int mpq_find_file(struct mpq *m, const char *filename, int *size)
 {
 	uint32_t hasha, hashb, offset;
+	uint64_t hash;
 	int block;
 
+	/* Generate bucket and hash from filename */
 	offset = hash_string(filename, 0) & (m->ht_size - 1);
 	hasha  = hash_string(filename, 0x100);
 	hashb  = hash_string(filename, 0x200);
 
+	hash = ((uint64_t)hasha << 32) | hashb;
+
+	/* Check all the entries in the hash bucket */
+	while(1)
+	{
+		/* 0xFFF.. means 'end of bucket', and we didn't find the filename in the table */
+		if(m->ht[offset].hash == 0xFFFFFFFFFFFFFFULL)
+			return 0;
+
+		/* Hashes match, we found the file in the hash table */
+		if(hash == m->ht[offset].hash)
+			break;
+
+		/* Check next bucket entry */
+		offset++;
+	}
+
+	/* Use the hash table entry we found to tell us what index the file has
+	 * into the block table.
+	 */
 	block = m->ht[offset].index;
 
+	/* Fill out the given pointer with the size of the
+	 * block so that memory can be allocated by the caller.
+	 */
 	if(size)
 		*size = m->bt[block].usize;
 
@@ -76,7 +101,7 @@ char *mpq_read_file(struct mpq *m, int block_index, char *out)
 		break;
 		default:
 			return NULL;
-		break;	
+		break;
 
 	}
 
