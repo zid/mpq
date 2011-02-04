@@ -28,7 +28,7 @@ static void read_block_table(struct mpq *m, const char *data)
 	 * iterations it needs via dividing the size of a block table entry by 4
 	 * and then mutliplying the amount of block table entries we have.
 	 */
-	decrypt_table(block_table, m->bt_size * (sizeof(struct block_table) / sizeof(uint32_t)), 
+	decrypt_table(block_table, m->bt_size * (sizeof(struct block_table) / sizeof(uint32_t)),
 		"(BLOCK TABLE)");
 
 	/* Convert our blob of memory into an array of block_table structs */
@@ -104,7 +104,6 @@ struct mpq *parse_replay(const char *file_data, int offset)
 
 		/* Skip to the first piece of user data and see if an MPQ1A can be found to parse */
 		m = parse_replay(file_data, header_offset);
-		
 	}
 	else if(memcmp(&file_data[offset], "MPQ\x1A", 4) == 0)
 	{
