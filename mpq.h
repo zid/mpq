@@ -19,6 +19,7 @@ struct mpq {
 	int bt_size;
 	struct hash_table *ht;
 	int ht_size;
+	int fd;				/* file descriptor of mapped archive */
 };
 
 void init_crypt(void);

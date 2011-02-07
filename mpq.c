@@ -36,8 +36,16 @@ struct mpq *mpq_open(const char *path)
 		return NULL;
 
 	m = parse_replay(data, 0);
+	m->fd = infile;
 
     return m;
+}
+
+void mpq_close(struct mpq *m)
+{
+	close(m->fd);
+	free(m->bt);
+	free(m->ht);
 }
 
 int mpq_find_file(struct mpq *m, const char *filename, int *size)
