@@ -46,6 +46,7 @@ void mpq_close(struct mpq *m)
 	close(m->fd);
 	free(m->bt);
 	free(m->ht);
+	free(m);
 }
 
 int mpq_find_file(struct mpq *m, const char *filename, int *size)
