@@ -66,7 +66,7 @@ int mpq_find_file(struct mpq *m, const char *filename, int *size)
 	while(1)
 	{
 		/* 0xFFF.. means 'end of bucket', and we didn't find the filename in the table */
-		if(m->ht[offset].hash == 0xFFFFFFFFFFFFFFULL)
+		if(m->ht[offset].hash == 0xFFFFFFFFFFFFFFFFULL)
 			return 0;
 
 		/* Hashes match, we found the file in the hash table */
